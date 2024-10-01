@@ -32,8 +32,21 @@ function bmw_clubs_africa_deactivate() {
     // Placeholder for deactivation tasks (e.g., removing scheduled events, temporary data cleanup)
 }
 
-// Plugin initialization function
-function bmw_clubs_africa_init() {
-    // Placeholder for loading plugin's core functionality (e.g., loading scripts, adding shortcodes)
+// Add admin menu item
+function bmw_clubs_africa_menu() {
+    add_menu_page(
+        __('BMW Clubs Africa', 'bmw-clubs-africa'), // Page title
+        __('BMW Clubs Africa', 'bmw-clubs-africa'), // Menu title
+        'manage_options', // Capability
+        'bmw-clubs-africa', // Menu slug
+        'bmw_clubs_africa_admin_page', // Function to display page content
+        'dashicons-car', // Dashicon for car
+        6 // Position in the admin menu
+    );
 }
-add_action('plugins_loaded', 'bmw_clubs_africa_init');
+add_action('admin_menu', 'bmw_clubs_africa_menu');
+
+// Display the content for the admin page
+function bmw_clubs_africa_admin_page() {
+    echo '<div class="wrap"><h1>' . __('BMW Clubs Africa Dashboard', 'bmw-clubs-africa') . '</h1></div>';
+}
