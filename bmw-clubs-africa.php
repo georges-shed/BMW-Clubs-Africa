@@ -23,6 +23,10 @@ define('BMW_CLUBS_AFRICA_PLUGIN_URL', plugin_dir_url(__FILE__));
 // Include admin pages file
 require_once BMW_CLUBS_AFRICA_PLUGIN_DIR . 'admin-pages.php';
 
+// Include the e-card file from the includes folder
+require_once BMW_CLUBS_AFRICA_PLUGIN_DIR . 'includes/e-card.php';
+require_once BMW_CLUBS_AFRICA_PLUGIN_DIR . 'includes/rides.php';
+
 // Plugin activation hook
 register_activation_hook(__FILE__, 'bmw_clubs_africa_activate');
 function bmw_clubs_africa_activate() {
@@ -34,3 +38,4 @@ register_deactivation_hook(__FILE__, 'bmw_clubs_africa_deactivate');
 function bmw_clubs_africa_deactivate() {
     // Placeholder for deactivation tasks (e.g., removing scheduled events, temporary data cleanup)
 }
+
