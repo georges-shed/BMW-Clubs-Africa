@@ -5,53 +5,63 @@ if (!defined('ABSPATH')) {
 }
 
 // Function to create admin menu and submenus
-function bmw_clubs_africa_menu() {
-    // Add main menu
+function club_manager_menu() {
+    // Add main menu and make "Clubs" the main content page
     add_menu_page(
-        __('BMW Clubs Africa', 'bmw-clubs-africa'), // Page title
-        __('BMW Clubs Africa', 'bmw-clubs-africa'), // Menu title
+        __('Club Manager', 'club-manager'), // Page title
+        __('Club Manager', 'club-manager'), // Menu title
         'manage_options', // Capability
-        'bmw-clubs-africa', // Menu slug
-        'bmw_clubs_africa_dashboard_page', // Function to display page content
-        'dashicons-car', // Dashicon for car
+        'club-manager-clubs', // Use 'club-manager-clubs' as the Menu slug to avoid the extra submenu
+        'club_manager_clubs_page', // Function to display page content for Clubs
+        'dashicons-groups', // Dashicon for club icon
         6 // Position in the admin menu
     );
 
-    // Add submenu for "Club Events"
+    // Add submenu for "Clubs" (this will effectively be the main page as well)
     add_submenu_page(
-        'bmw-clubs-africa', // Parent slug (main menu)
-        __('Club Events', 'bmw-clubs-africa'), // Page title
-        __('Club Events', 'bmw-clubs-africa'), // Submenu title
+        'club-manager-clubs', // Parent slug (main menu)
+        __('Clubs', 'club-manager'), // Page title
+        __('Clubs <span class="update-plugins count-36"><span class="plugin-count">36</span></span>', 'club-manager'), // Submenu title with notification badge
         'manage_options', // Capability
-        'bmw-club-events', // Submenu slug
-        'bmw_club_events_page' // Function to display page content
+        'club-manager-clubs', // Submenu slug
+        'club_manager_clubs_page' // Function to display page content
     );
 
-    // Add submenu for "Club Members"
+    // Add submenu for "Add New Club"
     add_submenu_page(
-        'bmw-clubs-africa', // Parent slug (main menu)
-        __('Club Members', 'bmw-clubs-africa'), // Page title
-        __('Club Members', 'bmw-clubs-africa'), // Submenu title
+        'club-manager-clubs', // Parent slug (main menu)
+        __('Add New Club', 'club-manager'), // Page title
+        __('Add New Club', 'club-manager'), // Submenu title
         'manage_options', // Capability
-        'bmw-club-members', // Submenu slug
-        'bmw_club_members_page' // Function to display page content
+        'club-manager-edit-club', // Submenu slug
+        'club_manager_edit_club_page' // Function to display page content
+    );
+
+    // Add submenu for "Settings"
+    add_submenu_page(
+        'club-manager-clubs', // Parent slug (main menu)
+        __('Settings', 'club-manager'), // Page title
+        __('Settings', 'club-manager'), // Submenu title
+        'manage_options', // Capability
+        'club-manager-settings', // Submenu slug
+        'club_manager_settings_page' // Function to display page content
     );
 }
 
-// Function to include the BMW Clubs Africa Dashboard page
-function bmw_clubs_africa_dashboard_page() {
-    require_once BMW_CLUBS_AFRICA_PLUGIN_DIR . 'admin-pages/dashboard-plugin.php';
+// Function to include the "Clubs" page
+function club_manager_clubs_page() {
+    require_once CLUB_MANAGER_PLUGIN_DIR . 'admin-pages/clubs.php';
 }
 
-// Function to include the "Club Events" page
-function bmw_club_events_page() {
-    require_once BMW_CLUBS_AFRICA_PLUGIN_DIR . 'admin-pages/club-events.php';
+// Function to include the "Add New Club" page
+function club_manager_edit_club_page() {
+    require_once CLUB_MANAGER_PLUGIN_DIR . 'admin-pages/edit-clubs.php';
 }
 
-// Function to include the "Club Members" page
-function bmw_club_members_page() {
-    require_once BMW_CLUBS_AFRICA_PLUGIN_DIR . 'admin-pages/club-members.php';
+// Function to include the "Settings" page
+function club_manager_settings_page() {
+    require_once CLUB_MANAGER_PLUGIN_DIR . 'admin-pages/settings.php';
 }
 
 // Hook to add the menu in the WordPress dashboard
-add_action('admin_menu', 'bmw_clubs_africa_menu');
+add_action('admin_menu', 'club_manager_menu');
