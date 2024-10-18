@@ -33,16 +33,17 @@ function create_club_tables() {
     ) $charset_collate;";
     $wpdb->query($sql);
 
-    // Table for Club Roles
-    $table_name = $wpdb->prefix . 'club_roles';
-    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
-        role_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-        club_id BIGINT(20) UNSIGNED NOT NULL,
-        role_name VARCHAR(255) NOT NULL,
-        PRIMARY KEY (role_id),
-        FOREIGN KEY (club_id) REFERENCES {$wpdb->prefix}clubs(club_id) ON DELETE CASCADE
-    ) $charset_collate;";
-    $wpdb->query($sql);
+   // Table for Club Roles
+$table_name = $wpdb->prefix . 'club_roles';
+$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+    role_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    club_id BIGINT(20) UNSIGNED NOT NULL,
+    username VARCHAR(255) NOT NULL, -- New column to store the username
+    role_name VARCHAR(255) NOT NULL,
+    PRIMARY KEY (role_id),
+    FOREIGN KEY (club_id) REFERENCES {$wpdb->prefix}clubs(club_id) ON DELETE CASCADE
+) $charset_collate;";
+$wpdb->query($sql);
 
     // Table for Payment Gateways
     $table_name = $wpdb->prefix . 'payment_gateways';
