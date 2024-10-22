@@ -86,3 +86,26 @@ jQuery(document).ready(function($) {
 
     $('.wc-enhanced-select').select2();
 });
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the club URL input field
+        var clubUrlInput = document.getElementById('club_url');
+
+        // Add an event listener to detect changes in the input field
+        clubUrlInput.addEventListener('input', function() {
+            var value = clubUrlInput.value;
+
+            // Ensure the value starts with "/"
+            if (value.charAt(0) !== '/') {
+                value = '/' + value;
+            }
+
+            // Replace spaces with hyphens
+            value = value.replace(/\s+/g, '-');
+
+            // Update the input field with the modified value
+            clubUrlInput.value = value;
+        });
+    });
+

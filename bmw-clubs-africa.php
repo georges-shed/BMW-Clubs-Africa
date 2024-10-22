@@ -23,11 +23,86 @@ define('CLUB_MANAGER_PLUGIN_URL', plugin_dir_url(__FILE__));
 // Include admin pages file
 require_once CLUB_MANAGER_PLUGIN_DIR . 'admin-pages.php';
 
+// Assuming the main plugin file is in the root folder of your plugin
+require_once plugin_dir_path(__FILE__) . 'admin-pages/includes/post-permissions.php';
+
+
 // Plugin activation hook
 register_activation_hook(__FILE__, 'club_manager_activate');
+
 function club_manager_activate() {
-    // Placeholder for activation tasks (e.g., setting default options, creating tables)
+    global $wpdb;
+    $charset_collate = $wpdb->get_charset_collate();
+
+    // Table for Clubs
+    $table_name = $wpdb->prefix . 'clubs';
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+        club_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+        club_name VARCHAR(255) NOT NULL,
+        club_url VARCHAR(255) NOT NULL,
+        club_logo VARCHAR(255) DEFAULT NULL,
+        PRIMARY KEY (club_id)
+    ) $charset_collate;";
+    $wpdb->query($sql);
+
+    // Table for EFT Details
+    $table_name = $wpdb->prefix . 'eft_details';
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+        eft_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+        club_id BIGINT(20) UNSIGNED NOT NULL,
+        account_name VARCHAR(255) NOT NULL,
+        account_number VARCHAR(255) NOT NULL,
+        bank_name VARCHAR(255) NOT NULL,
+        branch_code VARCHAR(50) NOT NULL,
+        PRIMARY KEY (eft_id),
+        FOREIGN KEY (club_id) REFERENCES {$wpdb->prefix}clubs(club_id) ON DELETE CASCADE
+    ) $charset_collate;";
+    $wpdb->query($sql);
+
+    // Table for Club Roles
+    $table_name = $wpdb->prefix . 'club_roles';
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+        role_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+        club_id BIGINT(20) UNSIGNED NOT NULL,
+        username VARCHAR(255) NOT NULL,
+        role_name VARCHAR(255) NOT NULL,
+        PRIMARY KEY (role_id),
+        FOREIGN KEY (club_id) REFERENCES {$wpdb->prefix}clubs(club_id) ON DELETE CASCADE
+    ) $charset_collate;";
+    $wpdb->query($sql);
+
+    // Table for Payment Gateways
+    $table_name = $wpdb->prefix . 'payment_gateways';
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+        gateway_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+        club_id BIGINT(20) UNSIGNED NOT NULL,
+        gateway_type VARCHAR(50) NOT NULL,
+        merchant_id VARCHAR(255) DEFAULT NULL,
+        merchant_key VARCHAR(255) DEFAULT NULL,
+        api_key VARCHAR(255) DEFAULT NULL,
+        secret_key VARCHAR(255) DEFAULT NULL,
+        yoco_link VARCHAR(255) DEFAULT NULL,
+        PRIMARY KEY (gateway_id),
+        FOREIGN KEY (club_id) REFERENCES {$wpdb->prefix}clubs(club_id) ON DELETE CASCADE
+    ) $charset_collate;";
+    $wpdb->query($sql);
+
+    // Table for Club Members
+    $table_name = $wpdb->prefix . 'club_members';
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+        id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+        club_id BIGINT(20) UNSIGNED NOT NULL,
+        club_name VARCHAR(255) NOT NULL,
+        user_name VARCHAR(255) NOT NULL,
+        user_email VARCHAR(255) NOT NULL,
+        role VARCHAR(255) NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        FOREIGN KEY (club_id) REFERENCES {$wpdb->prefix}clubs(club_id) ON DELETE CASCADE
+    ) $charset_collate;";
+    $wpdb->query($sql);
 }
+
 
 // Plugin deactivation hook
 register_deactivation_hook(__FILE__, 'club_manager_deactivate');

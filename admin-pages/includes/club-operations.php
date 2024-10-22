@@ -3,68 +3,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Function to create necessary tables if they do not exist
-function create_club_tables() {
-    global $wpdb;
-    $charset_collate = $wpdb->get_charset_collate();
-
-    // Table for Clubs
-    $table_name = $wpdb->prefix . 'clubs';
-    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
-        club_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-        club_name VARCHAR(255) NOT NULL,
-        club_url VARCHAR(255) NOT NULL,
-        club_logo VARCHAR(255) DEFAULT NULL, -- Changed to store URL as a string
-        PRIMARY KEY (club_id)
-    ) $charset_collate;";
-    $wpdb->query($sql);
-
-    // Table for EFT Details
-    $table_name = $wpdb->prefix . 'eft_details';
-    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
-        eft_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-        club_id BIGINT(20) UNSIGNED NOT NULL,
-        account_name VARCHAR(255) NOT NULL,
-        account_number VARCHAR(255) NOT NULL,
-        bank_name VARCHAR(255) NOT NULL,
-        branch_code VARCHAR(50) NOT NULL,
-        PRIMARY KEY (eft_id),
-        FOREIGN KEY (club_id) REFERENCES {$wpdb->prefix}clubs(club_id) ON DELETE CASCADE
-    ) $charset_collate;";
-    $wpdb->query($sql);
-
-   // Table for Club Roles
-$table_name = $wpdb->prefix . 'club_roles';
-$sql = "CREATE TABLE IF NOT EXISTS $table_name (
-    role_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    club_id BIGINT(20) UNSIGNED NOT NULL,
-    username VARCHAR(255) NOT NULL, -- New column to store the username
-    role_name VARCHAR(255) NOT NULL,
-    PRIMARY KEY (role_id),
-    FOREIGN KEY (club_id) REFERENCES {$wpdb->prefix}clubs(club_id) ON DELETE CASCADE
-) $charset_collate;";
-$wpdb->query($sql);
-
-    // Table for Payment Gateways
-    $table_name = $wpdb->prefix . 'payment_gateways';
-    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
-        gateway_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-        club_id BIGINT(20) UNSIGNED NOT NULL,
-        gateway_type VARCHAR(50) NOT NULL,
-        merchant_id VARCHAR(255) DEFAULT NULL,
-        merchant_key VARCHAR(255) DEFAULT NULL,
-        api_key VARCHAR(255) DEFAULT NULL,
-        secret_key VARCHAR(255) DEFAULT NULL,
-        yoco_link VARCHAR(255) DEFAULT NULL,
-        PRIMARY KEY (gateway_id),
-        FOREIGN KEY (club_id) REFERENCES {$wpdb->prefix}clubs(club_id) ON DELETE CASCADE
-    ) $charset_collate;";
-    $wpdb->query($sql);
-}
-
-
-// Run the function to create tables if they don't exist
-create_club_tables();
 
 // Check if club exists by name and URL
 function club_exists($club_name, $club_url) {
@@ -150,3 +88,4 @@ function save_or_update_roles($club_id, $club_roles) {
         }
     }
 }
+

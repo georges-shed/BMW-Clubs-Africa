@@ -147,10 +147,10 @@ $status_filter = isset($_GET['post_status']) ? sanitize_text_field($_GET['post_s
                     $sql = "
                         SELECT c.club_id, c.club_name, c.club_url, pg.gateway_type AS payment_method,
                                COALESCE(notifications.meta_value, '0') AS club_notifications, 
-                               GROUP_CONCAT(r.role_name SEPARATOR ', ') AS roles
+                               COALESCE(GROUP_CONCAT(m.role SEPARATOR ', '), 'No roles') AS roles
                         FROM {$wpdb->prefix}clubs c
-                        LEFT JOIN {$wpdb->prefix}club_roles r ON c.club_id = r.club_id
                         LEFT JOIN {$wpdb->prefix}payment_gateways pg ON c.club_id = pg.club_id
+                        LEFT JOIN {$wpdb->prefix}club_members m ON c.club_id = m.club_id
                         LEFT JOIN {$wpdb->postmeta} notifications ON c.club_id = notifications.post_id AND notifications.meta_key = '_club_notifications'
                         WHERE 1=1
                     ";
@@ -166,7 +166,7 @@ $status_filter = isset($_GET['post_status']) ? sanitize_text_field($_GET['post_s
 
                     // Add conditions based on filters
                     if (!empty($filter_role)) {
-                        $sql .= $wpdb->prepare(" AND r.role_name = %s", $filter_role);
+                        $sql .= $wpdb->prepare(" AND m.role = %s", $filter_role);
                     }
                     if ($filter_payment !== '') {
                         $sql .= $wpdb->prepare(" AND pg.gateway_type = %s", $filter_payment);

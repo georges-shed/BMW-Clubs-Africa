@@ -37,16 +37,6 @@ function club_manager_menu() {
         'club_manager_edit_club_page' // Function to display page content
     );
 
-    // Add submenu for "Add Club Members"
-    add_submenu_page(
-        'club-manager-clubs', // Parent slug (main menu)
-        __('Add Club Members', 'club-manager'), // Page title
-        __('Add Club Members', 'club-manager'), // Submenu title
-        'manage_options', // Capability
-        'club-manager-add-club-members', // Submenu slug
-        'club_manager_add_club_members_page' // Function to display page content
-    );
-
     // Add submenu for "Settings"
     add_submenu_page(
         'club-manager-clubs', // Parent slug (main menu)
@@ -67,12 +57,6 @@ function club_manager_clubs_page() {
 function club_manager_edit_club_page() {
     require_once CLUB_MANAGER_PLUGIN_DIR . 'admin-pages/edit-clubs.php';
 }
-
-// Function to include the "Add Club Members" page
-function club_manager_add_club_members_page() {
-    require_once CLUB_MANAGER_PLUGIN_DIR . 'admin-pages/add-club-members.php';
-}
-
 
 // Function to include the "Settings" page
 function club_manager_settings_page() {
