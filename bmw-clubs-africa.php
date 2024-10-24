@@ -201,12 +201,17 @@ add_action('wp_ajax_fetch_club_members', 'fetch_club_members');
 function fetch_club_members() {
     global $wpdb;
 
-    // Get the club name from the AJAX request
-    $club_name = sanitize_text_field($_POST['club_name']);
+    // Get the club ID from the AJAX request
+    $club_id = isset($_POST['club_id']) ? intval($_POST['club_id']) : 0;
 
-    // Query to fetch members from the database where the club name matches
+    if (!$club_id) {
+        echo '<tr><td colspan="6">' . __('Invalid club ID.', 'club-manager') . '</td></tr>';
+        wp_die();
+    }
+
+    // Query to fetch members from the database where the club ID matches
     $members = $wpdb->get_results(
-        $wpdb->prepare("SELECT id, club_name, user_name, user_email, role FROM wp_club_members WHERE club_name = %s", $club_name)
+        $wpdb->prepare("SELECT id, club_name, user_name, user_email, role FROM {$wpdb->prefix}club_members WHERE club_id = %d", $club_id)
     );
 
     // If members are found, return the table rows

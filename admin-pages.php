@@ -48,13 +48,21 @@ function club_manager_menu() {
     );
 }
 
-// Function to include the "Clubs" page
+// Function to include the "Clubs" page or the edit page based on action
 function club_manager_clubs_page() {
-    require_once CLUB_MANAGER_PLUGIN_DIR . 'admin-pages/clubs.php';
+    // Check if action is 'edit' and a valid club_id is provided
+    if (isset($_GET['action']) && $_GET['action'] === 'edit' && isset($_GET['club_id'])) {
+        // Load the edit-all-clubs.php file for editing
+        require_once CLUB_MANAGER_PLUGIN_DIR . 'admin-pages/includes/edit-all-clubs.php';
+    } else {
+        // If no action or different action, load the normal clubs list
+        require_once CLUB_MANAGER_PLUGIN_DIR . 'admin-pages/clubs.php';
+    }
 }
 
 // Function to include the "Add New Club" page
 function club_manager_edit_club_page() {
+    // Load the "Add New Club" page by default
     require_once CLUB_MANAGER_PLUGIN_DIR . 'admin-pages/edit-clubs.php';
 }
 
