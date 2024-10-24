@@ -169,7 +169,7 @@ $status_filter = isset($_GET['post_status']) ? sanitize_text_field($_GET['post_s
     <!-- Bulk Action Form -->
     <div class="tablenav top">
         <form method="post" action="">
-            <div class="alignleft actions bulkactions">
+        <div class="alignleft actions bulkactions" style="padding-bottom: 20px;">
                 <select name="bulk_action">
                     <option value=""><?php echo __('Bulk Actions', 'club-manager'); ?></option>
                     <option value="delete"><?php echo __('Delete Permanently', 'club-manager'); ?></option>

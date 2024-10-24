@@ -326,6 +326,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_club_details']))
         width: 85% !important;
         margin-top: 25px;
     }
+    
 </style>
 <script>
     jQuery(document).ready(function($) {
