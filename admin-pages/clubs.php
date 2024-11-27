@@ -51,13 +51,6 @@ if (isset($_POST['bulk_action']) && !empty($_POST['club'])) {
                 ));
                 break;
 
-            case 'delete':
-                $wpdb->query($wpdb->prepare(
-                    "DELETE FROM {$wpdb->prefix}clubs WHERE club_id IN ($club_ids_placeholder)",
-                    $selected_clubs
-                ));
-                break;
-
             default:
                 // Do nothing if no valid action
                 break;
@@ -74,7 +67,7 @@ $counts = $wpdb->get_results("
 ", OBJECT_K);
 
 // Assign counts to variables for easy access
-$count_all = array_sum(array_column($counts, 'count'));
+$count_all = (isset($counts['active']) ? $counts['active']->count : 0) + (isset($counts['draft']) ? $counts['draft']->count : 0);
 $count_active = isset($counts['active']) ? $counts['active']->count : 0;
 $count_draft = isset($counts['draft']) ? $counts['draft']->count : 0;
 $count_bin = isset($counts['trash']) ? $counts['trash']->count : 0;
@@ -96,8 +89,8 @@ $status_filter = isset($_GET['post_status']) ? sanitize_text_field($_GET['post_s
         flex-wrap: wrap;
         margin-bottom: 15px;
         position: relative;
-    top: 50px;
-    left: 70px;
+        top: 50px;
+        left: 70px;
     }
     .filter-container .alignleft, .filter-container .alignright {
         margin-top: 10px;
@@ -112,9 +105,10 @@ $status_filter = isset($_GET['post_status']) ? sanitize_text_field($_GET['post_s
     #clubs-table th, #clubs-table td {
         white-space: nowrap;
     }
-    #clubs-table{
+    #clubs-table {
         margin-top: 30px;
     }
+    
 </style>
 
 <!-- HTML -->
@@ -172,7 +166,6 @@ $status_filter = isset($_GET['post_status']) ? sanitize_text_field($_GET['post_s
         <div class="alignleft actions bulkactions" style="padding-bottom: 20px;">
                 <select name="bulk_action">
                     <option value=""><?php echo __('Bulk Actions', 'club-manager'); ?></option>
-                    <option value="delete"><?php echo __('Delete Permanently', 'club-manager'); ?></option>
                     <option value="trash"><?php echo __('Move to Trash', 'club-manager'); ?></option>
                     <option value="draft"><?php echo __('Mark as Draft', 'club-manager'); ?></option>
                     <option value="active"><?php echo __('Mark as Active', 'club-manager'); ?></option> <!-- New option for marking clubs as active -->
@@ -195,7 +188,7 @@ $status_filter = isset($_GET['post_status']) ? sanitize_text_field($_GET['post_s
     <?php
     // Prepare SQL query to retrieve clubs, roles, and payment methods from the custom tables
     $sql = "
-        SELECT c.club_id, c.club_name, c.club_url, pg.gateway_type AS payment_method,
+        SELECT c.club_id, c.club_name, c.club_url, c.club_status, pg.gateway_type AS payment_method,
                COALESCE(GROUP_CONCAT(m.role SEPARATOR ', '), 'No roles') AS roles
         FROM {$wpdb->prefix}clubs c
         LEFT JOIN {$wpdb->prefix}payment_gateways pg ON c.club_id = pg.club_id
@@ -208,6 +201,8 @@ $status_filter = isset($_GET['post_status']) ? sanitize_text_field($_GET['post_s
         $sql .= " AND c.club_status = 'active'";
     } elseif ($status_filter === 'draft') {
         $sql .= " AND c.club_status = 'draft'";
+    } elseif ($status_filter === 'all') {
+        $sql .= " AND c.club_status IN ('active', 'draft')";
     } elseif ($status_filter === 'trash') {
         $sql .= " AND c.club_status = 'trash'";
     }
@@ -233,11 +228,12 @@ $status_filter = isset($_GET['post_status']) ? sanitize_text_field($_GET['post_s
     foreach ($clubs as $club) {
         // Use 'club-manager-clubs' page slug to open the edit page under the Clubs tab
         $edit_link = admin_url('admin.php?page=club-manager-clubs&action=edit&club_id=' . $club->club_id);
+        $status_label = ($club->club_status === 'draft') ? ' — Draft' : '';
         echo "<tr>
                 <th scope='row' class='check-column'><input type='checkbox' name='club[]' value='{$club->club_id}' /></th>
                 <td>
                     <strong>
-                        <a class='row-title' href='{$edit_link}'>" . esc_html($club->club_name) . "</a>
+                        <a class='row-title' href='{$edit_link}'>" . esc_html($club->club_name) . "</a>{$status_label}
                     </strong>
                     <div class='row-actions'>
                         <span class='edit'>

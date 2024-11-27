@@ -47,11 +47,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_club_details']))
             ]
         );
         $club_id = $wpdb->insert_id; // Get the new club ID
+
+        // Automatically create a page for the new club
+        create_club_page($club_name, $club_url);
     }
 
     // Redirect to avoid resubmitting the form on page reload
     wp_redirect(add_query_arg(['club_id' => $club_id, 'updated' => true], $_SERVER['REQUEST_URI']));
     exit;
+}
+
+// Function to create a WordPress page for the new club
+function create_club_page($club_name, $club_url) {
+    $page_data = [
+        'post_title' => $club_name,
+        'post_name' => ltrim($club_url, '/'), // Page slug without leading slash
+        'post_content' => 'Welcome to ' . $club_name,
+        'post_status' => 'publish',
+        'post_type' => 'page',
+    ];
+
+    // Check if page already exists
+    $existing_page = get_page_by_path($page_data['post_name']);
+    if (!$existing_page) {
+        wp_insert_post($page_data);
+    }
 }
 
 ?>
