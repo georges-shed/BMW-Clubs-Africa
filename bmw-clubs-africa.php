@@ -30,6 +30,7 @@ require_once CLUB_MANAGER_PLUGIN_DIR . 'club-permissions.php';
 require_once plugin_dir_path(__FILE__) . 'admin-pages/includes/post-permissions.php';
 
 
+
 // Plugin activation hook
 register_activation_hook(__FILE__, 'club_manager_activate');
 

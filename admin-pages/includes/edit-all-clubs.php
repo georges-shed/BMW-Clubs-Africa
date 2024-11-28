@@ -159,6 +159,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_club_details']))
 
     <!-- Club Details Tab -->
 <div id="tab-club-details" class="tab-content" style="display: block;">
+<h3>Club Details</h3>
+<p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tenetur ipsam iusto praesentium nobis excepturi rem.</p>
     <form method="post">
         <table class="form-table">
             <tr>
@@ -189,6 +191,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_club_details']))
 
     <!-- EFT Details Tab -->
     <div id="tab-eft-details" class="tab-content" style="display: none;">
+    <h3>EFT Details</h3>
+    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tenetur ipsam iusto praesentium nobis excepturi rem.</p>
         <form method="post">
             <table class="form-table">
                 <tr>
@@ -213,7 +217,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_club_details']))
 
     <!-- Payment Gateways Tab -->
     <div id="tab-payment-gateways" class="tab-content" style="display: none;">
-        <h2>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tenetur ipsam iusto praesentium nobis excepturi rem.</h2>
+        <h3>Payment Gateways</h3>
+        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tenetur ipsam iusto praesentium nobis excepturi rem.</p>
         <form method="post">
             <table class="form-table">
                 <tr>

@@ -51,6 +51,51 @@ if (isset($_POST['bulk_action']) && !empty($_POST['club'])) {
                 ));
                 break;
 
+                case 'export_csv': // New action to export as CSV
+                    // Clean any previous output
+                    if (ob_get_contents()) {
+                        ob_end_clean();
+                    }
+                
+                    // Prepare SQL to retrieve club data for selected IDs
+                    $clubs_data = $wpdb->get_results($wpdb->prepare(
+                        "SELECT c.club_name, c.club_url, 
+                                COALESCE(GROUP_CONCAT(pg.gateway_type SEPARATOR ', '), 'No payment methods') AS payment_methods,
+                                COALESCE(GROUP_CONCAT(m.role SEPARATOR ', '), 'No roles') AS roles
+                         FROM {$wpdb->prefix}clubs c
+                         LEFT JOIN {$wpdb->prefix}club_members m ON c.club_id = m.club_id
+                         LEFT JOIN {$wpdb->prefix}payment_gateways pg ON c.club_id = pg.club_id
+                         WHERE c.club_id IN ($club_ids_placeholder)
+                         GROUP BY c.club_id",
+                        $selected_clubs
+                    ), ARRAY_A);
+                
+                    // Generate CSV file
+                    if (!empty($clubs_data)) {
+                        header('Content-Type: text/csv');
+                        header('Content-Disposition: attachment; filename="selected_clubs.csv"');
+                
+                        $output = fopen('php://output', 'w');
+                
+                        // Add CSV headers
+                        fputcsv($output, ['Club Name', 'Home URL', 'Payment Methods', 'Roles']);
+                
+                        // Add rows for selected clubs
+                        foreach ($clubs_data as $club) {
+                            fputcsv($output, [
+                                $club['club_name'],
+                                $club['club_url'],
+                                $club['payment_methods'],
+                                $club['roles']
+                            ]);
+                        }
+                
+                        fclose($output);
+                        exit; // Terminate script after generating the CSV file
+                    }
+                    break;
+                
+
             default:
                 // Do nothing if no valid action
                 break;
@@ -103,7 +148,7 @@ $status_filter = isset($_GET['post_status']) ? sanitize_text_field($_GET['post_s
         width: 220px;
     }
     #clubs-table th, #clubs-table td {
-        white-space: nowrap;
+        white-space: wrap;
     }
     #clubs-table {
         margin-top: 30px;
@@ -169,6 +214,8 @@ $status_filter = isset($_GET['post_status']) ? sanitize_text_field($_GET['post_s
                     <option value="trash"><?php echo __('Move to Trash', 'club-manager'); ?></option>
                     <option value="draft"><?php echo __('Mark as Draft', 'club-manager'); ?></option>
                     <option value="active"><?php echo __('Mark as Active', 'club-manager'); ?></option> <!-- New option for marking clubs as active -->
+                    <option value="export_csv"><?php echo __('Export as CSV', 'club-manager'); ?></option>
+
                 </select>
                 <button type="submit" class="button action"><?php echo __('Apply', 'club-manager'); ?></button>
             </div>
